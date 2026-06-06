@@ -1,12 +1,12 @@
-const storageKey = "traen-app-state-v1";
+const storageKey = "træn-app-state-v1";
 
 const exerciseBank = {
   bodyweight: {
-    push: ["Push-ups", "Pike push-ups", "Diamond push-ups", "Dips paa stol"],
-    pull: ["Inverted row under bord", "Doorframe row", "Superman pull", "Handklaede row"],
+    push: ["Push-ups", "Pike push-ups", "Diamond push-ups", "Dips på stol"],
+    pull: ["Inverted row under bord", "Doorframe row", "Superman pull", "Håndklæde row"],
     legs: ["Squats", "Bulgarian split squat", "Lunges", "Glute bridge"],
     core: ["Planke", "Dead bug", "Mountain climbers", "Sideplanke"],
-    cardio: ["Interval loeb", "Burpees", "High knees", "Step-ups"]
+    cardio: ["Interval løb", "Burpees", "High knees", "Step-ups"]
   },
   dumbbells: {
     push: ["DB bench press", "DB shoulder press", "DB floor press", "DB lateral raise"],
@@ -138,7 +138,7 @@ function generatePlan(profile) {
   const repMap = {
     strength: { reps: "4-6", rest: "2-3 min", focus: "Styrke" },
     muscle: { reps: "8-12", rest: "75-120 sek", focus: "Hypertrofi" },
-    fatloss: { reps: "10-15", rest: "45-75 sek", focus: "Fedtforbraending" },
+    fatloss: { reps: "10-15", rest: "45-75 sek", focus: "Fedtforbrænding" },
     fitness: { reps: "12-18", rest: "30-60 sek", focus: "Kondition" }
   };
   const levelSets = { beginner: 3, intermediate: 4, advanced: 5 };
@@ -417,7 +417,7 @@ elements.exportButton.addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "traeningsplan.json";
+  link.download = "træningsplan.json";
   link.click();
   URL.revokeObjectURL(link.href);
 });
