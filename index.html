@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101820">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Traen">
+    <title>Traen</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Personlig traening</p>
+          <h1>Traen</h1>
+        </div>
+        <button class="icon-button" id="installButton" type="button" title="Installer">
+          <span>+</span>
+        </button>
+      </section>
+
+      <nav class="tabs" aria-label="App visninger">
+        <button class="tab is-active" data-view="setup" type="button">Profil</button>
+        <button class="tab" data-view="plan" type="button">Plan</button>
+        <button class="tab" data-view="progress" type="button">Status</button>
+      </nav>
+
+      <section class="view is-active" id="setupView">
+        <form class="panel profile-grid" id="profileForm">
+          <label>
+            <span>Alder</span>
+            <input id="age" name="age" type="number" min="13" max="90" value="28" required>
+          </label>
+          <label>
+            <span>Vægt (kg)</span>
+            <input id="weight" name="weight" type="number" min="35" max="250" value="82" required>
+          </label>
+          <label>
+            <span>Højde (cm)</span>
+            <input id="height" name="height" type="number" min="120" max="230" value="182" required>
+          </label>
+          <label>
+            <span>Dage om ugen</span>
+            <input id="days" name="days" type="range" min="2" max="6" value="4">
+            <strong id="daysLabel">4 dage</strong>
+          </label>
+          <label>
+            <span>Traeningstid</span>
+            <select id="duration" name="duration">
+              <option value="30">30 min</option>
+              <option value="45" selected>45 min</option>
+              <option value="60">60 min</option>
+              <option value="75">75 min</option>
+            </select>
+          </label>
+          <label>
+            <span>Maal</span>
+            <select id="goal" name="goal">
+              <option value="strength">Styrke</option>
+              <option value="muscle" selected>Muskelmasse</option>
+              <option value="fatloss">Fedtforbraending</option>
+              <option value="fitness">Kondition</option>
+            </select>
+          </label>
+          <label>
+            <span>Niveau</span>
+            <select id="level" name="level">
+              <option value="beginner">Begynder</option>
+              <option value="intermediate" selected>Øvet</option>
+              <option value="advanced">Avanceret</option>
+            </select>
+          </label>
+          <label>
+            <span>Udstyr</span>
+            <select id="equipment" name="equipment">
+              <option value="bodyweight">Kun kropsvægt</option>
+              <option value="dumbbells">Håndvægte</option>
+              <option value="gym" selected>Fitnesscenter</option>
+            </select>
+          </label>
+          <button class="primary-action" type="submit">Lav min plan</button>
+        </form>
+
+        <section class="insights">
+          <article>
+            <span>BMI</span>
+            <strong id="bmiValue">24.8</strong>
+            <p id="bmiText">Normal vægt</p>
+          </article>
+          <article>
+            <span>Fokus</span>
+            <strong id="focusValue">Hypertrofi</strong>
+            <p>Planen justerer reps, saet og pause.</p>
+          </article>
+        </section>
+      </section>
+
+      <section class="view" id="planView">
+        <div class="plan-header">
+          <div>
+            <p class="eyebrow">Denne uge</p>
+            <h2 id="planTitle">4-dages hypertrofi</h2>
+          </div>
+          <button class="secondary-action" id="regenerateButton" type="button">Regenerer</button>
+        </div>
+        <div class="week-strip" id="weekStrip"></div>
+        <div class="workout-card" id="workoutCard"></div>
+      </section>
+
+      <section class="view" id="progressView">
+        <div class="panel">
+          <div class="progress-head">
+            <div>
+              <p class="eyebrow">Din rytme</p>
+              <h2 id="completionTitle">0 af 4 pas</h2>
+            </div>
+            <button class="secondary-action" id="resetWeekButton" type="button">Nulstil uge</button>
+          </div>
+          <div class="meter"><span id="meterFill"></span></div>
+          <div class="stats-grid">
+            <article>
+              <span>Volumen</span>
+              <strong id="volumeStat">0 sæt</strong>
+            </article>
+            <article>
+              <span>Kalorie-estimat</span>
+              <strong id="calorieStat">0 kcal</strong>
+            </article>
+          </div>
+          <label class="notes-label">
+            <span>Noter til naeste plan</span>
+            <textarea id="notes" rows="5" placeholder="Fx mere ben, mindre loeb, oevelse jeg ikke kan lide..."></textarea>
+          </label>
+          <div class="button-row">
+            <button class="secondary-action" id="exportButton" type="button">Eksportér</button>
+            <label class="file-action">
+              Importer
+              <input id="importFile" type="file" accept="application/json">
+            </label>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="exerciseTemplate">
+      <article class="exercise">
+        <div>
+          <strong class="exercise-name"></strong>
+          <span class="exercise-meta"></span>
+        </div>
+        <div class="exercise-controls">
+          <button type="button" class="tiny-button decrease">-</button>
+          <button type="button" class="tiny-button increase">+</button>
+          <button type="button" class="tiny-button swap">Byt</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
