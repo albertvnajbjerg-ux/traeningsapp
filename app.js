@@ -1,4 +1,4 @@
-const storageKey = "træn-app-state-v1";
+const storageKey = "traen-app-state-v1";
 
 const exerciseBank = {
   bodyweight: {
