@@ -153,6 +153,13 @@ label {
   font-weight: 700;
 }
 
+small {
+  color: #c8d2cf;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
 input,
 select,
 textarea {
@@ -193,6 +200,21 @@ input[type="range"] {
   color: #0d1711;
 }
 
+.form-message {
+  display: none;
+  grid-column: 1 / -1;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 123, 123, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 123, 123, 0.12);
+  color: #ffd2d2;
+  font-weight: 700;
+}
+
+.form-message.is-visible {
+  display: block;
+}
+
 .secondary-action,
 .file-action {
   background: var(--panel-2);
@@ -228,12 +250,64 @@ article strong {
 }
 
 .week-strip {
-  display: grid;
+  display: none;
   grid-auto-flow: column;
   grid-auto-columns: minmax(78px, 1fr);
   gap: 8px;
   overflow-x: auto;
   padding-bottom: 8px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(88px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.calendar-day {
+  min-height: 118px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(23, 34, 43, 0.92);
+  color: var(--text);
+  padding: 10px;
+  text-align: left;
+}
+
+.calendar-day.is-active {
+  border-color: var(--accent);
+  background: #20382e;
+}
+
+.calendar-day.is-rest {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.calendar-day.is-done {
+  border-color: rgba(143, 214, 148, 0.72);
+}
+
+.calendar-day span {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.calendar-day strong {
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.calendar-day small {
+  color: var(--accent-2);
 }
 
 .day-pill {
@@ -308,6 +382,14 @@ article strong {
   margin-top: 4px;
 }
 
+.exercise-help {
+  display: block;
+  margin-top: 6px;
+  color: #c8d2cf;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
 .exercise-controls {
   display: flex;
   gap: 6px;
@@ -366,6 +448,10 @@ article strong {
 
   h1 {
     font-size: 2rem;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(118px, 1fr));
   }
 
   .workout-summary,

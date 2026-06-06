@@ -32,6 +32,23 @@ const splitNames = {
   6: ["Push", "Pull", "Legs", "Push volume", "Pull volume", "Legs + core"]
 };
 
+const weekDays = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
+const trainingDaySlots = {
+  2: [0, 3],
+  3: [0, 2, 4],
+  4: [0, 1, 3, 5],
+  5: [0, 1, 2, 4, 5],
+  6: [0, 1, 2, 3, 4, 5]
+};
+
+const groupExplanations = {
+  push: "Pres-øvelser træner bryst, skuldre og triceps.",
+  pull: "Træk-øvelser træner ryg, biceps og kropsholdning.",
+  legs: "Ben-øvelser bygger lår, baller og stabilitet.",
+  core: "Core gør mave, lænd og balance stærkere.",
+  cardio: "Kondition får pulsen op og forbedrer udholdenhed."
+};
+
 const state = loadState();
 let activeDay = 0;
 let deferredInstallPrompt = null;
@@ -49,7 +66,9 @@ const elements = {
   bmiValue: document.querySelector("#bmiValue"),
   bmiText: document.querySelector("#bmiText"),
   focusValue: document.querySelector("#focusValue"),
+  formMessage: document.querySelector("#formMessage"),
   planTitle: document.querySelector("#planTitle"),
+  calendarGrid: document.querySelector("#calendarGrid"),
   weekStrip: document.querySelector("#weekStrip"),
   workoutCard: document.querySelector("#workoutCard"),
   regenerateButton: document.querySelector("#regenerateButton"),
@@ -86,7 +105,11 @@ function defaultState() {
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(storageKey));
-    if (saved?.profile && saved?.plan) return saved;
+    if (saved?.profile && saved?.plan) {
+      saved.profile.age = Math.max(10, Number(saved.profile.age) || 10);
+      saved.profile.duration = Number(saved.profile.duration) || 45;
+      return saved;
+    }
   } catch {
     localStorage.removeItem(storageKey);
   }
@@ -125,18 +148,19 @@ function generatePlan(profile) {
   const intensity = calculateIntensity(profile);
 
   return split.map((name, index) => {
-    const pattern = getPattern(name, profile.goal);
+    const pattern = getPattern(name, profile.goal, profile.duration);
     const exercises = pattern.map((group, exerciseIndex) => {
       const names = bank[group];
       const exerciseName = names[(index + exerciseIndex) % names.length];
-      const sets = Math.max(2, levelSets[profile.level] + (intensity === "high" && exerciseIndex < 2 ? 1 : 0));
-      const timeBox = profile.duration <= 30 && exerciseIndex > 3 ? 2 : sets;
+      const baseSets = levelSets[profile.level] + (intensity === "high" && exerciseIndex < 2 ? 1 : 0);
+      const sets = Math.max(1, baseSets + getDurationSetAdjustment(profile.duration, exerciseIndex));
       return {
         group,
         name: exerciseName,
-        sets: timeBox,
+        sets,
         reps: group === "cardio" ? getCardioDose(profile) : goalData.reps,
-        rest: group === "cardio" ? "aktiv pause" : goalData.rest
+        rest: group === "cardio" ? "aktiv pause" : goalData.rest,
+        explanation: groupExplanations[group]
       };
     });
 
@@ -145,23 +169,40 @@ function generatePlan(profile) {
       name,
       focus: goalData.focus,
       duration: profile.duration,
+      weekday: trainingDaySlots[profile.days][index],
       exercises
     };
   });
 }
 
-function getPattern(name, goal) {
-  if (goal === "fitness") return ["cardio", "legs", "push", "pull", "core"];
-  if (goal === "fatloss") return ["legs", "push", "pull", "cardio", "core"];
-  if (name.includes("Push")) return ["push", "push", "core", "cardio"];
-  if (name.includes("Pull")) return ["pull", "pull", "legs", "core"];
-  if (name.includes("Leg")) return ["legs", "legs", "core", "cardio"];
-  if (name.includes("Lower")) return ["legs", "legs", "core", "cardio"];
-  if (name.includes("Conditioning")) return ["cardio", "legs", "core", "push"];
-  return ["push", "pull", "legs", "core"];
+function getPattern(name, goal, duration) {
+  let pattern;
+  if (goal === "fitness") pattern = ["cardio", "legs", "push", "pull", "core"];
+  else if (goal === "fatloss") pattern = ["legs", "push", "pull", "cardio", "core"];
+  else if (name.includes("Push")) pattern = ["push", "push", "core", "cardio"];
+  else if (name.includes("Pull")) pattern = ["pull", "pull", "legs", "core"];
+  else if (name.includes("Leg")) pattern = ["legs", "legs", "core", "cardio"];
+  else if (name.includes("Lower")) pattern = ["legs", "legs", "core", "cardio"];
+  else if (name.includes("Conditioning")) pattern = ["cardio", "legs", "core", "push"];
+  else pattern = ["push", "pull", "legs", "core"];
+
+  if (duration <= 10) return pattern.slice(0, 2);
+  if (duration <= 15) return pattern.slice(0, 3);
+  if (duration <= 25) return pattern.slice(0, 4);
+  return pattern;
+}
+
+function getDurationSetAdjustment(duration, exerciseIndex) {
+  if (duration <= 10) return exerciseIndex === 0 ? -1 : -2;
+  if (duration <= 15) return -1;
+  if (duration <= 25) return exerciseIndex > 1 ? -1 : 0;
+  return 0;
 }
 
 function getCardioDose(profile) {
+  if (profile.duration <= 10) return "3 x 30 sek";
+  if (profile.duration <= 15) return "5 x 30 sek";
+  if (profile.duration <= 25) return "6-8 min";
   if (profile.goal === "fitness") return "8 x 45 sek";
   if (profile.goal === "fatloss") return "10-18 min";
   return "6-10 min";
@@ -191,9 +232,17 @@ function updateProfileReadout() {
   elements.focusValue.textContent = {
     strength: "Styrke",
     muscle: "Hypertrofi",
-    fatloss: "Forbraending",
+    fatloss: "Forbrænding",
     fitness: "Kondition"
   }[profile.goal];
+  validateAge(profile.age);
+}
+
+function validateAge(age) {
+  const isTooYoung = age < 10;
+  elements.formMessage.textContent = isTooYoung ? "Alderen skal være mindst 10 år for at lave en plan." : "";
+  elements.formMessage.classList.toggle("is-visible", isTooYoung);
+  return !isTooYoung;
 }
 
 function renderPlan() {
@@ -201,6 +250,7 @@ function renderPlan() {
   const focus = state.plan[0]?.focus || "Personlig";
   elements.planTitle.textContent = `${profile.days}-dages ${focus.toLowerCase()}`;
   elements.weekStrip.innerHTML = "";
+  renderCalendar();
 
   state.plan.forEach((day, index) => {
     const button = document.createElement("button");
@@ -216,6 +266,40 @@ function renderPlan() {
 
   renderWorkout();
   renderProgress();
+}
+
+function renderCalendar() {
+  const daysBySlot = new Map(state.plan.map((day, index) => [day.weekday ?? trainingDaySlots[state.profile.days][index], { day, index }]));
+  elements.calendarGrid.innerHTML = "";
+
+  weekDays.forEach((weekday, slot) => {
+    const training = daysBySlot.get(slot);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "calendar-day";
+
+    if (!training) {
+      button.classList.add("is-rest");
+      button.innerHTML = `<span>${weekday}</span><strong>Hviledag</strong><small>Gåtur, mobilitet eller fri</small>`;
+      elements.calendarGrid.appendChild(button);
+      return;
+    }
+
+    const isActive = training.index === activeDay;
+    const isDone = state.completed[training.day.id];
+    button.classList.toggle("is-active", isActive);
+    button.classList.toggle("is-done", isDone);
+    button.innerHTML = `
+      <span>${weekday}</span>
+      <strong>${training.day.name}</strong>
+      <small>${training.day.duration} min · ${training.day.focus}${isDone ? " · klaret" : ""}</small>
+    `;
+    button.addEventListener("click", () => {
+      activeDay = training.index;
+      renderPlan();
+    });
+    elements.calendarGrid.appendChild(button);
+  });
 }
 
 function renderWorkout() {
@@ -238,7 +322,11 @@ function renderWorkout() {
   day.exercises.forEach((exercise, index) => {
     const item = document.querySelector("#exerciseTemplate").content.firstElementChild.cloneNode(true);
     item.querySelector(".exercise-name").textContent = exercise.name;
-    item.querySelector(".exercise-meta").textContent = `${exercise.sets} saet x ${exercise.reps} · pause ${exercise.rest}`;
+    item.querySelector(".exercise-meta").textContent = `${exercise.sets} sæt x ${exercise.reps} · pause ${exercise.rest}`;
+    const help = document.createElement("small");
+    help.className = "exercise-help";
+    help.textContent = exercise.explanation || groupExplanations[exercise.group] || "Hold god teknik og stop ved smerte.";
+    item.querySelector(".exercise-meta").after(help);
     item.querySelector(".decrease").addEventListener("click", () => changeSets(index, -1));
     item.querySelector(".increase").addEventListener("click", () => changeSets(index, 1));
     item.querySelector(".swap").addEventListener("click", () => swapExercise(index));
@@ -294,7 +382,9 @@ elements.form.addEventListener("input", updateProfileReadout);
 
 elements.form.addEventListener("submit", (event) => {
   event.preventDefault();
-  state.profile = getProfileFromForm();
+  const profile = getProfileFromForm();
+  if (!validateAge(profile.age)) return;
+  state.profile = profile;
   state.plan = generatePlan(state.profile);
   state.completed = {};
   activeDay = 0;

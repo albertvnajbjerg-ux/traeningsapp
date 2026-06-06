@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#101820">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Traen">
-    <title>Traen</title>
+    <meta name="apple-mobile-web-app-title" content="Træn">
+    <title>Træn</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="apple-touch-icon" href="icon.svg">
     <link rel="stylesheet" href="styles.css">
@@ -16,8 +16,8 @@
     <main class="app-shell">
       <section class="topbar">
         <div>
-          <p class="eyebrow">Personlig traening</p>
-          <h1>Traen</h1>
+          <p class="eyebrow">Personlig træning</p>
+          <h1>Træn</h1>
         </div>
         <button class="icon-button" id="installButton" type="button" title="Installer">
           <span>+</span>
@@ -34,38 +34,48 @@
         <form class="panel profile-grid" id="profileForm">
           <label>
             <span>Alder</span>
-            <input id="age" name="age" type="number" min="13" max="90" value="28" required>
+            <input id="age" name="age" type="number" min="10" max="90" value="28" required>
+            <small>Appen laver kun planer fra 10 år og op. Yngre børn skal træne med en voksen/træner.</small>
           </label>
           <label>
             <span>Vægt (kg)</span>
             <input id="weight" name="weight" type="number" min="35" max="250" value="82" required>
+            <small>Bruges til BMI og et groft kalorie-estimat.</small>
           </label>
           <label>
             <span>Højde (cm)</span>
             <input id="height" name="height" type="number" min="120" max="230" value="182" required>
+            <small>Bruges sammen med vægt til at justere belastningen.</small>
           </label>
           <label>
             <span>Dage om ugen</span>
             <input id="days" name="days" type="range" min="2" max="6" value="4">
             <strong id="daysLabel">4 dage</strong>
+            <small>Fordeler træning og hviledage over ugen.</small>
           </label>
           <label>
-            <span>Traeningstid</span>
+            <span>Træningstid</span>
             <select id="duration" name="duration">
+              <option value="10">10 min</option>
+              <option value="15">15 min</option>
+              <option value="20">20 min</option>
+              <option value="25">25 min</option>
               <option value="30">30 min</option>
               <option value="45" selected>45 min</option>
               <option value="60">60 min</option>
               <option value="75">75 min</option>
             </select>
+            <small>Kortere pas får færre øvelser og lidt skarpere fokus.</small>
           </label>
           <label>
-            <span>Maal</span>
+            <span>Mål</span>
             <select id="goal" name="goal">
               <option value="strength">Styrke</option>
               <option value="muscle" selected>Muskelmasse</option>
-              <option value="fatloss">Fedtforbraending</option>
+              <option value="fatloss">Fedtforbrænding</option>
               <option value="fitness">Kondition</option>
             </select>
+            <small>Styrer reps, pauser og hvilke øvelser planen prioriterer.</small>
           </label>
           <label>
             <span>Niveau</span>
@@ -74,6 +84,7 @@
               <option value="intermediate" selected>Øvet</option>
               <option value="advanced">Avanceret</option>
             </select>
+            <small>Bestemmer hvor mange sæt planen starter med.</small>
           </label>
           <label>
             <span>Udstyr</span>
@@ -82,7 +93,9 @@
               <option value="dumbbells">Håndvægte</option>
               <option value="gym" selected>Fitnesscenter</option>
             </select>
+            <small>Vælger øvelser, der passer til det du faktisk har.</small>
           </label>
+          <p class="form-message" id="formMessage" role="alert"></p>
           <button class="primary-action" type="submit">Lav min plan</button>
         </form>
 
@@ -95,7 +108,7 @@
           <article>
             <span>Fokus</span>
             <strong id="focusValue">Hypertrofi</strong>
-            <p>Planen justerer reps, saet og pause.</p>
+            <p>Planen justerer reps, sæt og pause.</p>
           </article>
         </section>
       </section>
@@ -108,6 +121,7 @@
           </div>
           <button class="secondary-action" id="regenerateButton" type="button">Regenerer</button>
         </div>
+        <div class="calendar-grid" id="calendarGrid" aria-label="Ugekalender"></div>
         <div class="week-strip" id="weekStrip"></div>
         <div class="workout-card" id="workoutCard"></div>
       </section>
@@ -133,8 +147,9 @@
             </article>
           </div>
           <label class="notes-label">
-            <span>Noter til naeste plan</span>
-            <textarea id="notes" rows="5" placeholder="Fx mere ben, mindre loeb, oevelse jeg ikke kan lide..."></textarea>
+            <span>Noter til næste plan</span>
+            <textarea id="notes" rows="5" placeholder="Fx mere ben, mindre løb, øvelse jeg ikke kan lide..."></textarea>
+            <small>Noterne gemmes kun på din telefon og kan hjælpe dig med næste uge.</small>
           </label>
           <div class="button-row">
             <button class="secondary-action" id="exportButton" type="button">Eksportér</button>
