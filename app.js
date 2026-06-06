@@ -1252,23 +1252,26 @@ function renderWorkout() {
     details.innerHTML = formatHowTo(exercise.name);
     item.appendChild(details);
 
-    toggle.addEventListener("click", (event) => {
-      event.stopPropagation();
+    const toggleExpansion = () => {
       const expanded = item.classList.toggle("is-expanded");
       toggle.classList.toggle("is-open", expanded);
       toggle.setAttribute("aria-label", expanded ? "Skjul detaljer" : "Vis detaljer");
-    });
-    nameEl.addEventListener("click", (event) => {
+    };
+
+    item.addEventListener("click", toggleExpansion);
+    toggle.addEventListener("click", (event) => event.stopPropagation());
+    item.querySelector(".decrease").addEventListener("click", (event) => {
       event.stopPropagation();
-      toggle.click();
+      changeSets(index, -1);
     });
-    help.addEventListener("click", (event) => {
+    item.querySelector(".increase").addEventListener("click", (event) => {
       event.stopPropagation();
-      toggle.click();
+      changeSets(index, 1);
     });
-    item.querySelector(".decrease").addEventListener("click", (event) => event.stopPropagation());
-    item.querySelector(".increase").addEventListener("click", (event) => event.stopPropagation());
-    item.querySelector(".swap").addEventListener("click", (event) => event.stopPropagation());
+    item.querySelector(".swap").addEventListener("click", (event) => {
+      event.stopPropagation();
+      swapExercise(index);
+    });
 
     list.appendChild(item);
   });
