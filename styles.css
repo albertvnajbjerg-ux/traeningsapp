@@ -7,7 +7,7 @@
   --muted: #9baea5;
   --line: rgba(240, 239, 232, 0.1);
   --line-strong: rgba(240, 239, 232, 0.2);
-  --accent: #58cc02;
+  --accent: #5dd167;
   --accent-2: #ff9600;
   --accent-3: #1cb0f6;
   --danger: #ff4b4b;
@@ -28,7 +28,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(88, 204, 2, 0.1), transparent),
+    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(93, 209, 103, 0.1), transparent),
     radial-gradient(ellipse 60% 30% at 80% 90%, rgba(255, 150, 0, 0.07), transparent),
     var(--bg);
   color: var(--text);
@@ -73,16 +73,16 @@ textarea {
 
 .mascot {
   flex-shrink: 0;
-  background: linear-gradient(140deg, rgba(88, 204, 2, 0.15), rgba(255, 150, 0, 0.1));
+  background: linear-gradient(140deg, rgba(93, 209, 103, 0.15), rgba(255, 150, 0, 0.1));
   padding: 6px;
   border-radius: 50%;
-  border: 2px solid rgba(88, 204, 2, 0.2);
+  border: 2px solid rgba(93, 209, 103, 0.2);
   transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
 }
 
 .mascot:hover {
   transform: scale(1.1) rotate(-8deg);
-  box-shadow: 0 0 20px rgba(88, 204, 2, 0.3);
+  box-shadow: 0 0 20px rgba(93, 209, 103, 0.3);
 }
 
 .mascot svg {
@@ -180,7 +180,7 @@ button:focus-visible,
 .tab.is-active {
   background: linear-gradient(140deg, var(--accent) 0%, #4ab802 100%);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(88, 204, 2, 0.35);
+  box-shadow: 0 4px 16px rgba(93, 209, 103, 0.35);
   transform: none;
 }
 
@@ -292,13 +292,13 @@ input[type="range"] {
   grid-column: 1 / -1;
   background: linear-gradient(140deg, var(--accent) 0%, #4ab802 100%);
   color: #fff;
-  box-shadow: 0 6px 20px rgba(88, 204, 2, 0.35);
+  box-shadow: 0 6px 20px rgba(93, 209, 103, 0.35);
   text-transform: uppercase;
 }
 
 .primary-action:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(88, 204, 2, 0.45);
+  box-shadow: 0 10px 28px rgba(93, 209, 103, 0.45);
 }
 
 .primary-action:active {
@@ -515,13 +515,13 @@ article strong {
 .calendar-day:hover {
   transform: translateY(-3px);
   border-color: var(--accent);
-  box-shadow: 0 8px 24px rgba(88, 204, 2, 0.15);
+  box-shadow: 0 8px 24px rgba(93, 209, 103, 0.15);
 }
 
 .calendar-day.is-active {
   border-color: var(--accent);
   background: linear-gradient(160deg, var(--accent), #3a9e02);
-  box-shadow: 0 8px 28px rgba(88, 204, 2, 0.3);
+  box-shadow: 0 8px 28px rgba(93, 209, 103, 0.3);
   color: #fff;
 }
 
@@ -541,7 +541,7 @@ article strong {
 
 .calendar-day.is-done {
   border-color: var(--accent);
-  background: linear-gradient(160deg, rgba(88, 204, 2, 0.12), rgba(88, 204, 2, 0.04));
+  background: linear-gradient(160deg, rgba(93, 209, 103, 0.12), rgba(93, 209, 103, 0.04));
 }
 
 .calendar-day.is-done strong::before {
@@ -674,7 +674,7 @@ article strong {
 }
 
 .exercise.is-clickable:hover {
-  background: linear-gradient(160deg, rgba(88, 204, 2, 0.06), rgba(255, 255, 255, 0.03));
+  background: linear-gradient(160deg, rgba(93, 209, 103, 0.06), rgba(255, 255, 255, 0.03));
   border-color: var(--accent);
   transform: translateY(-1px);
 }
@@ -684,7 +684,7 @@ article strong {
 }
 
 .exercise.is-expanded {
-  background: linear-gradient(160deg, rgba(88, 204, 2, 0.08), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(160deg, rgba(93, 209, 103, 0.08), rgba(255, 255, 255, 0.02));
   border-color: var(--accent);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
@@ -934,7 +934,7 @@ article strong {
   border-radius: inherit;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
   transition: width 500ms var(--ease);
-  box-shadow: 0 0 16px rgba(88, 204, 2, 0.4);
+  box-shadow: 0 0 16px rgba(93, 209, 103, 0.4);
 }
 
 .motivation-banner {
@@ -969,7 +969,7 @@ article strong {
 }
 
 .celebration-inner {
-  background: linear-gradient(140deg, var(--panel), rgba(88, 204, 2, 0.2));
+  background: linear-gradient(140deg, var(--panel), rgba(93, 209, 103, 0.2));
   border: 2px solid var(--accent);
   border-radius: var(--radius-lg);
   padding: 30px 40px;
@@ -1000,6 +1000,20 @@ article strong {
   font-size: 0.95rem;
   color: var(--muted);
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.celebration-divider {
+  opacity: 0.4;
+}
+
+.celebration-coins {
+  color: var(--accent-2);
+  font-weight: 700;
 }
 
 .notes-label {
@@ -1016,6 +1030,115 @@ article strong {
 .file-action input {
   display: none;
 }
+
+.shop-section {
+  margin-top: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.shop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.shop-coins {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent-2);
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.shop-item {
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  justify-items: center;
+  text-align: center;
+  padding: 12px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.02);
+  transition: transform 200ms var(--ease), border-color 200ms var(--ease);
+}
+
+.shop-item:hover {
+  transform: translateY(-2px);
+}
+
+.shop-item.is-active {
+  border-color: var(--accent);
+  background: rgba(93, 209, 103, 0.08);
+}
+
+.shop-item.is-owned {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.shop-item-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--fg);
+}
+
+.shop-item-label {
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+.shop-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.shop-select,
+.shop-buy {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  transition: transform 150ms var(--ease);
+}
+
+.shop-select {
+  background: var(--accent);
+  color: #fff;
+}
+
+.shop-buy {
+  background: var(--accent-2);
+  color: #0e1a14;
+}
+
+.shop-select:hover,
+.shop-buy:hover {
+  transform: scale(1.05);
+}
+
+.shop-price {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+@media (max-width: 380px) {
+  .shop-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 
 .calendar-grid::-webkit-scrollbar {
   height: 6px;

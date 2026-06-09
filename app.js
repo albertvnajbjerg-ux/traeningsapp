@@ -794,7 +794,10 @@ const elements = {
   streakValue: document.querySelector("#streakValue"),
   xpValue: document.querySelector("#xpValue"),
   pasValue: document.querySelector("#pasValue"),
-  motivationBanner: document.querySelector("#motivationBanner")
+  motivationBanner: document.querySelector("#motivationBanner"),
+  topMascot: document.querySelector("#topMascot"),
+  shopSection: document.querySelector("#shopSection"),
+  coinsValue: document.querySelector("#coinsValue")
 };
 
 function defaultState() {
@@ -814,6 +817,9 @@ function defaultState() {
     completed: {},
     notes: "",
     xp: 0,
+    coins: 0,
+    ownedMascots: ["default"],
+    activeMascot: "default",
     streak: { count: 0, lastDate: null }
   };
 }
@@ -825,6 +831,9 @@ function loadState() {
       saved.profile.age = Math.max(10, Number(saved.profile.age) || 10);
       saved.profile.duration = Number(saved.profile.duration) || 45;
       saved.xp = saved.xp || 0;
+      saved.coins = saved.coins || 0;
+      saved.ownedMascots = saved.ownedMascots || ["default"];
+      saved.activeMascot = saved.activeMascot || "default";
       saved.streak = saved.streak || { count: 0, lastDate: null };
       return saved;
     }
@@ -1061,11 +1070,47 @@ function updateStreak() {
   return true;
 }
 
+const mascots = {
+  default: { name: "Træno", cost: 0, colors: { body: "#5dd167", plate: "#ff9600", cheek: "#fff" }, label: "Den glade maskot" },
+  fire: { name: "Ild", cost: 50, colors: { body: "#ff4b4b", plate: "#ff9600", cheek: "#ffd700" }, label: "Flammer igennem!" },
+  ice: { name: "Is", cost: 60, colors: { body: "#1cb0f6", plate: "#00bcd4", cheek: "#fff" }, label: "Cool og rolig" },
+  dark: { name: "Mørk", cost: 80, colors: { body: "#7c4dff", plate: "#4a148c", cheek: "#b388ff" }, label: "Mystisk og stærk" },
+  gold: { name: "Guld", cost: 100, colors: { body: "#ffd700", plate: "#ffaa00", cheek: "#fff" }, label: "Skinner stærkest" },
+  rainbow: { name: "Regnbue", cost: 150, colors: { body: "#e040fb", plate: "#ff4081", cheek: "#fff" }, label: "Alle farver!" }
+};
+
+function mascotSvgHtml(id, size) {
+  const m = mascots[id] || mascots.default;
+  const s = size || 42;
+  return `<svg viewBox="0 0 512 512" width="${s}" height="${s}" fill="none">
+    <rect x="166" y="180" width="180" height="152" rx="40" fill="${m.colors.body}"/>
+    <rect x="80" y="198" width="86" height="116" rx="24" fill="${m.colors.plate}" opacity="0.9"/>
+    <rect x="346" y="198" width="86" height="116" rx="24" fill="${m.colors.plate}" opacity="0.9"/>
+    <circle cx="196" cy="248" r="16" fill="#fff"/>
+    <circle cx="316" cy="248" r="16" fill="#fff"/>
+    <circle cx="196" cy="248" r="7" fill="#0e1a14"/>
+    <circle cx="316" cy="248" r="7" fill="#0e1a14"/>
+    <circle cx="176" cy="270" r="10" fill="${m.colors.cheek}" opacity="0.25"/>
+    <circle cx="336" cy="270" r="10" fill="${m.colors.cheek}" opacity="0.25"/>
+    <path d="M224 276 Q256 314 288 276" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+    <ellipse cx="256" cy="298" rx="12" ry="7" fill="#ff4b4b" opacity="0.6"/>
+  </svg>`;
+}
+
 function awardXp(day) {
   const base = 10;
   const durationBonus = day.duration >= 45 ? 5 : day.duration >= 25 ? 3 : 0;
   const streakBonus = state.streak.count >= 7 ? 5 : state.streak.count >= 3 ? 2 : 0;
   state.xp += base + durationBonus + streakBonus;
+  saveState();
+  return base + durationBonus + streakBonus;
+}
+
+function awardCoins(day) {
+  const base = 5;
+  const durationBonus = day.duration >= 45 ? 3 : day.duration >= 25 ? 2 : 0;
+  const streakBonus = state.streak.count >= 7 ? 3 : state.streak.count >= 3 ? 1 : 0;
+  state.coins += base + durationBonus + streakBonus;
   saveState();
   return base + durationBonus + streakBonus;
 }
@@ -1080,18 +1125,18 @@ function getMotivation(streakCount) {
   return { icon: pool.icon, text: pool.texts[Math.floor(Math.random() * pool.texts.length)] };
 }
 
-function showCelebration(motivation, earnedXp) {
+function showCelebration(motivation, earnedXp, earnedCoins) {
   const el = document.createElement("div");
   el.className = "celebration";
   el.innerHTML = `
     <div class="celebration-inner">
       <div class="celebration-icon">${motivation.icon}</div>
       <div class="celebration-text">${motivation.text}</div>
-      <p class="celebration-sub">+${earnedXp} XP · ${state.streak.count} dages stribe</p>
+      <p class="celebration-sub">+${earnedXp} XP <span class="celebration-divider">·</span> <span class="celebration-coins">+${earnedCoins} 🪙</span> <span class="celebration-divider">·</span> ${state.streak.count} dages stribe</p>
     </div>
   `;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2200);
+  setTimeout(() => el.remove(), 2600);
 }
 
 function renderProfile() {
@@ -1346,9 +1391,10 @@ function renderWorkout() {
     state.completed[day.id] = nowDone;
     if (nowDone) {
       updateStreak();
-      const earned = awardXp(day);
+      const earnedXp = awardXp(day);
+      const earnedCoins = awardCoins(day);
       const mot = getMotivation(state.streak.count);
-      showCelebration(mot, earned);
+      showCelebration(mot, earnedXp, earnedCoins);
     }
     saveState();
     renderPlan();
@@ -1375,6 +1421,62 @@ function swapExercise(index) {
   exercise.description = exerciseDescriptions[next] || groupExplanations[exercise.group] || "";
   saveState();
   renderWorkout();
+}
+
+function renderShop() {
+  const grid = elements.shopSection;
+  let html = `<div class="shop-header"><span class="shop-coins">🪙 ${state.coins} mønter</span></div><div class="shop-grid">`;
+  Object.entries(mascots).forEach(([id, m]) => {
+    const owned = state.ownedMascots.includes(id);
+    const active = state.activeMascot === id;
+    const affordable = state.coins >= m.cost;
+    html += `<div class="shop-item${owned ? " is-owned" : ""}${active ? " is-active" : ""}" data-mascot="${id}">`;
+    html += mascotSvgHtml(id, 52);
+    html += `<span class="shop-item-name">${m.name}</span>`;
+    if (owned) {
+      if (active) {
+        html += `<span class="shop-badge">✅ Valgt</span>`;
+      } else {
+        html += `<button class="shop-select" type="button">Vælg</button>`;
+      }
+    } else {
+      if (affordable) {
+        html += `<button class="shop-buy" type="button">🪙 ${m.cost}</button>`;
+      } else {
+        html += `<span class="shop-price">🪙 ${m.cost}</span>`;
+      }
+    }
+    html += `</div>`;
+  });
+  html += `</div>`;
+  grid.innerHTML = html;
+  grid.querySelectorAll(".shop-item").forEach((item) => {
+    const id = item.dataset.mascot;
+    const buyBtn = item.querySelector(".shop-buy");
+    const selectBtn = item.querySelector(".shop-select");
+    if (buyBtn) {
+      buyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (state.coins >= mascots[id].cost && !state.ownedMascots.includes(id)) {
+          state.coins -= mascots[id].cost;
+          state.ownedMascots.push(id);
+          state.activeMascot = id;
+          saveState();
+          renderProgress();
+        }
+      });
+    }
+    if (selectBtn) {
+      selectBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (state.ownedMascots.includes(id)) {
+          state.activeMascot = id;
+          saveState();
+          renderProgress();
+        }
+      });
+    }
+  });
 }
 
 function renderProgress() {
@@ -1404,6 +1506,16 @@ function renderProgress() {
     } else {
       elements.motivationBanner.hidden = true;
     }
+  }
+
+  if (elements.topMascot) {
+    elements.topMascot.innerHTML = mascotSvgHtml(state.activeMascot, 42);
+  }
+  if (elements.coinsValue) {
+    elements.coinsValue.textContent = `${state.coins} 🪙`;
+  }
+  if (elements.shopSection) {
+    renderShop();
   }
 }
 
