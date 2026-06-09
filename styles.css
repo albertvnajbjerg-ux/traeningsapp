@@ -65,6 +65,30 @@ textarea {
   padding: 6px 2px 2px;
 }
 
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mascot {
+  flex-shrink: 0;
+  background: linear-gradient(140deg, rgba(88, 204, 2, 0.15), rgba(255, 150, 0, 0.1));
+  padding: 6px;
+  border-radius: 50%;
+  border: 2px solid rgba(88, 204, 2, 0.2);
+  transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
+}
+
+.mascot:hover {
+  transform: scale(1.1) rotate(-8deg);
+  box-shadow: 0 0 20px rgba(88, 204, 2, 0.3);
+}
+
+.mascot svg {
+  display: block;
+}
+
 h1,
 h2,
 p {
@@ -859,25 +883,31 @@ article strong {
   gap: 4px;
   align-content: center;
   text-align: center;
-  padding: 14px 8px;
+  padding: 16px 8px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.02);
+  transition: transform 200ms var(--ease), border-color 200ms var(--ease);
+}
+
+.progress-stat:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
 }
 
 .progress-stat-value {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 900;
   color: var(--accent);
   line-height: 1;
 }
 
 .progress-stat-label {
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 .progress-stat.streak .progress-stat-value {
@@ -985,6 +1015,30 @@ article strong {
 
 .file-action input {
   display: none;
+}
+
+.calendar-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.calendar-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.calendar-grid::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+}
+
+.calendar-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--line-strong);
+}
+
+@media (min-width: 621px) {
+  .app-shell {
+    padding-top: max(28px, env(safe-area-inset-top));
+    padding-bottom: max(32px, env(safe-area-inset-bottom));
+  }
 }
 
 @media (max-width: 620px) {

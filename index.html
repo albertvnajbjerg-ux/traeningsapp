@@ -15,9 +15,26 @@
   <body>
     <main class="app-shell">
       <section class="topbar">
-        <div>
-          <p class="eyebrow">Personlig træning</p>
-          <h1>Træn</h1>
+        <div class="topbar-left">
+          <div class="mascot" aria-hidden="true">
+            <svg viewBox="0 0 512 512" width="42" height="42" fill="none">
+              <rect x="166" y="180" width="180" height="152" rx="40" fill="var(--accent)"/>
+              <rect x="80" y="198" width="86" height="116" rx="24" fill="var(--accent-2)" opacity="0.9"/>
+              <rect x="346" y="198" width="86" height="116" rx="24" fill="var(--accent-2)" opacity="0.9"/>
+              <circle cx="196" cy="248" r="16" fill="#fff"/>
+              <circle cx="316" cy="248" r="16" fill="#fff"/>
+              <circle cx="196" cy="248" r="7" fill="var(--bg)"/>
+              <circle cx="316" cy="248" r="7" fill="var(--bg)"/>
+              <circle cx="176" cy="270" r="10" fill="#fff" opacity="0.25"/>
+              <circle cx="336" cy="270" r="10" fill="#fff" opacity="0.25"/>
+              <path d="M224 276 Q256 314 288 276" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+              <ellipse cx="256" cy="298" rx="12" ry="7" fill="var(--danger)" opacity="0.6"/>
+            </svg>
+          </div>
+          <div>
+            <p class="eyebrow">Personlig træning</p>
+            <h1>Træn</h1>
+          </div>
         </div>
         <button class="icon-button" id="installButton" type="button" title="Installer">
           <span>+</span>
